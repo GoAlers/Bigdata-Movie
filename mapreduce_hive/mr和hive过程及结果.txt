@@ -1,0 +1,193 @@
+Mapreduce统计词频：
+
+[root@master mr]# ls
+Harry_Potter_and_the_Sorcerer‘s_Stone.txt  map_new.py  red_new.py  run.sh  The_Man_of_Property.txt
+[root@master mr]# vim run.sh 
+[root@master mr]# bash run.sh 
+rmr: DEPRECATED: Please use 'rm -r' instead.
+Deleted /movieoutput
+20/05/19 11:40:59 WARN streaming.StreamJob: -file option is deprecated, please use generic option -files instead.
+packageJobJar: [./map_new.py, ./red_new.py, /tmp/hadoop-unjar580504151660082487/] [] /tmp/streamjob6814476713590359870.jar tmpDir=null
+20/05/19 11:41:01 INFO client.RMProxy: Connecting to ResourceManager at master/192.168.179.10:8032
+20/05/19 11:41:01 INFO client.RMProxy: Connecting to ResourceManager at master/192.168.179.10:8032
+20/05/19 11:41:03 INFO mapred.FileInputFormat: Total input paths to process : 1
+20/05/19 11:41:04 INFO mapreduce.JobSubmitter: number of splits:2
+20/05/19 11:41:04 INFO mapreduce.JobSubmitter: Submitting tokens for job: job_1589857910921_0005
+20/05/19 11:41:04 INFO impl.YarnClientImpl: Submitted application application_1589857910921_0005
+20/05/19 11:41:05 INFO mapreduce.Job: The url to track the job: http://master:8088/proxy/application_1589857910921_0005/
+20/05/19 11:41:05 INFO mapreduce.Job: Running job: job_1589857910921_0005
+20/05/19 11:41:17 INFO mapreduce.Job: Job job_1589857910921_0005 running in uber mode : false
+20/05/19 11:41:17 INFO mapreduce.Job:  map 0% reduce 0%
+20/05/19 11:41:35 INFO mapreduce.Job:  map 50% reduce 0%
+20/05/19 11:41:36 INFO mapreduce.Job:  map 100% reduce 0%
+20/05/19 11:41:46 INFO mapreduce.Job:  map 100% reduce 100%
+20/05/19 11:41:47 INFO mapreduce.Job: Job job_1589857910921_0005 completed successfully
+20/05/19 11:41:47 INFO mapreduce.Job: Counters: 50
+	File System Counters
+		FILE: Number of bytes read=1076619
+		FILE: Number of bytes written=2485013
+		FILE: Number of read operations=0
+		FILE: Number of large read operations=0
+		FILE: Number of write operations=0
+		HDFS: Number of bytes read=636495
+		HDFS: Number of bytes written=181530
+		HDFS: Number of read operations=9
+		HDFS: Number of large read operations=0
+		HDFS: Number of write operations=2
+	Job Counters 
+		Killed map tasks=1
+		Launched map tasks=2
+		Launched reduce tasks=1
+		Data-local map tasks=2
+		Total time spent by all maps in occupied slots (ms)=31952
+		Total time spent by all reduces in occupied slots (ms)=8711
+		Total time spent by all map tasks (ms)=31952
+		Total time spent by all reduce tasks (ms)=8711
+		Total vcore-milliseconds taken by all map tasks=31952
+		Total vcore-milliseconds taken by all reduce tasks=8711
+		Total megabyte-milliseconds taken by all map tasks=32718848
+		Total megabyte-milliseconds taken by all reduce tasks=8920064
+	Map-Reduce Framework
+		Map input records=2866
+		Map output records=111818
+		Map output bytes=852977
+		Map output materialized bytes=1076625
+		Input split bytes=188
+		Combine input records=0
+		Combine output records=0
+		Reduce input groups=16985
+		Reduce shuffle bytes=1076625
+		Reduce input records=111818
+		Reduce output records=16984
+		Spilled Records=223636
+		Shuffled Maps =2
+		Failed Shuffles=0
+		Merged Map outputs=2
+		GC time elapsed (ms)=595
+		CPU time spent (ms)=5780
+		Physical memory (bytes) snapshot=503996416
+		Virtual memory (bytes) snapshot=6232170496
+		Total committed heap usage (bytes)=263024640
+	Shuffle Errors
+		BAD_ID=0
+		CONNECTION=0
+		IO_ERROR=0
+		WRONG_LENGTH=0
+		WRONG_MAP=0
+		WRONG_REDUCE=0
+	File Input Format Counters 
+		Bytes Read=636307
+	File Output Format Counters 
+		Bytes Written=181530
+20/05/19 11:41:47 INFO streaming.StreamJob: Output directory: /movieoutput
+[root@master mr]# hadoop fs -cat /movieoutput/part-00000 | tail
+“will	2
+“women	1
+“wouldn’t	1
+“you	16
+“your	1
+“you’d	2
+“you’ll	1
+“you’ve	1
+“‘of	1
+”	34
+[root@master mr]# 
+
+
+
+Hive结果：
+
+hive> drop table movie1;
+OK
+Time taken: 0.359 seconds
+hive> create table IF NOT EXISTS movie1(
+    > name string,
+    > score double,
+    > people int,
+    > type string,
+    > address string,
+    > time int,
+    > sum float)
+    > ROW FORMAT DELIMITED FIELDS TERMINATED BY ',';
+OK
+Time taken: 0.138 seconds
+hive> load data local inpath '/douban/movie.csv' into table movie1;
+Loading data to table default.movie1
+Table default.movie1 stats: [numFiles=1, totalSize=715178]
+OK
+Time taken: 0.678 seconds
+hive> select * from movie1 limit 10;
+OK
+肖申克的救赎	9.6	692795	剧情/犯罪	美国	1994	6650832.0
+这个杀手不太冷 	9.4	662552	剧情/动作/犯罪	法国	1994	6227989.0
+盗梦空间	9.2	642134	剧情/动作/科幻/悬疑/冒险	美国/英国	2010	5907633.0
+阿甘正传	9.4	580897	剧情/爱情	美国	1994	5460432.0
+三傻大闹宝莱坞	9.1	549808	剧情/喜剧/爱情/歌舞	印度	2011	5003253.0
+泰坦尼克号	9.1	535491	剧情/爱情/灾难	美国	1998	4872968.0
+让子弹飞	8.7	534791	剧情/喜剧/动作/西部	中国大陆/香港	2010	4652681.5
+千与千寻 千と千尋の神隠	9.2	525505	剧情/动画/奇幻	日本	2001	4834646.0
+少年派的奇幻漂流	9.0	489231	剧情/奇幻/冒险	美国/台湾/英国/加拿大	2012	4403079.0
+霸王别姬	9.4	478523	剧情/爱情/同性	中国大陆/香港	1993	4498116.0
+Time taken: 0.107 seconds, Fetched: 10 row(s)
+
+hive> select name,score,sum,time from movie1 where sum > 1000000  distribute by score sort by score desc,sum desc limit 20;
+Query ID = root_20200517171319_650cf520-d597-45e3-8bfc-e33ca801582a
+Total jobs = 2
+Launching Job 1 out of 2
+Number of reduce tasks not specified. Estimated from input data size: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1589684973687_0006, Tracking URL = http://master:8088/proxy/application_1589684973687_0006/
+Kill Command = /usr/local/src/hadoop-2.6.5/bin/hadoop job  -kill job_1589684973687_0006
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 1
+2020-05-17 17:13:34,350 Stage-1 map = 0%,  reduce = 0%
+2020-05-17 17:13:46,403 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 3.29 sec
+2020-05-17 17:13:58,358 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 5.82 sec
+MapReduce Total cumulative CPU time: 5 seconds 820 msec
+Ended Job = job_1589684973687_0006
+Launching Job 2 out of 2
+Number of reduce tasks determined at compile time: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1589684973687_0007, Tracking URL = http://master:8088/proxy/application_1589684973687_0007/
+Kill Command = /usr/local/src/hadoop-2.6.5/bin/hadoop job  -kill job_1589684973687_0007
+Hadoop job information for Stage-2: number of mappers: 1; number of reducers: 1
+2020-05-17 17:14:17,413 Stage-2 map = 0%,  reduce = 0%
+2020-05-17 17:14:26,223 Stage-2 map = 100%,  reduce = 0%, Cumulative CPU 1.49 sec
+2020-05-17 17:14:36,961 Stage-2 map = 100%,  reduce = 100%, Cumulative CPU 4.0 sec
+MapReduce Total cumulative CPU time: 4 seconds 0 msec
+Ended Job = job_1589684973687_0007
+MapReduce Jobs Launched: 
+Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 5.82 sec   HDFS Read: 722439 HDFS Write: 1129 SUCCESS
+Stage-Stage-2: Map: 1  Reduce: 1   Cumulative CPU: 4.0 sec   HDFS Read: 6202 HDFS Write: 1139 SUCCESS
+Total MapReduce CPU Time Spent: 9 seconds 820 msec
+OK
+肖申克的救赎	9.6	6650832.0	1994
+美丽人生 	9.5	3114622.5	1997
+这个杀手不太冷 	9.4	6227989.0	1994
+阿甘正传	9.4	5460432.0	1994
+霸王别姬	9.4	4498116.0	1993
+辛德勒的名单	9.4	2884897.5	1993
+泰坦尼克号 	9.4	1476495.6	2012
+机器人总动员 	9.3	3922126.2	2008
+疯狂动物城	9.3	2647263.5	2016
+十二怒汉	9.3	1255025.8	1957
+盗梦空间	9.2	5907633.0	2010
+千与千寻 千と千尋の神隠	9.2	4834646.0	2001
+忠犬八公的故事	9.2	3244039.5	2009
+教父	9.2	2584013.2	1972
+乱世佳人	9.2	2080405.2	1939
+三傻大闹宝莱坞	9.1	5003253.0	2011
+泰坦尼克号	9.1	4872968.0	1998
+星际穿越	9.1	3459274.0	2014
+大话西游之大圣娶亲 西遊記大結局之仙履奇	9.1	3332629.2	2014
+龙猫 となりのトト	9.1	3133293.8	1988
+Time taken: 78.253 seconds, Fetched: 20 row(s)

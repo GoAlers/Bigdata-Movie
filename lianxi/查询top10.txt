@@ -1,0 +1,3 @@
+SELECT id,name,score FROM movies
+ORDER BY score DESC,id ASC
+LIMIT 10;
