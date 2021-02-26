@@ -2,7 +2,7 @@
 
 本项目以电影数据为主题，以数据采集、处理、分析及数据可视化为项目流程，可实现百万级电影数据离线处理与计算。  
 
-项目详解：https://blog.csdn.net/qq_36816848/article/details/1128611582.
+项目详解：https://blog.csdn.net/qq_36816848/article/details/112861158.
 
 开发环境：IDEA+Pycharm+Python3+hadoop2.8+hive2.3.0+mysql5.7+sqoop+spark  
 
